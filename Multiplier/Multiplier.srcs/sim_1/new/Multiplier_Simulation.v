@@ -23,24 +23,23 @@
 module Multiplier_Simulation(
 
     );
-reg clk = 0; 
+reg clk = 0;            //clock signal
+reg [3:0]a = 5;         //input signal, variable should be defined reg 
+reg [3:0]b = 5;         //input signal
+wire [7:0]out;          //output
 
-reg [3:0]a = 5;
-reg [3:0]b = 5;
-wire [7:0]out;
-
-initial begin
-b = 5;
-#200 b = 6;
+initial begin           //inital 
+b = 5;                  
+#200 b = 6;             //delay 200ns
 #200 b = 7;
 #200 b = 8;
 #200 b = 9;
 #200 b = 10;
 end
 
-always begin
+always begin            //generate period = 20ns clock signal
 #10 clk <= ~clk;
 end
 
-Multiplier my_test(clk, a, b, out);
+Multiplier my_test(clk, a, b, out);         //invoke top module
 endmodule

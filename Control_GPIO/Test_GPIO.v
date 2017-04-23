@@ -21,9 +21,9 @@
 
 
 module Test_GPIO(
-input in,
-output out
+input in,               //input signal
+output out              //output signal
     );
-assign out = ~in;
+assign out = ~in;       //assign out = ~in 
 
-endmodule
+endmodule               //endmodule

@@ -24,8 +24,8 @@ module Multiplier(
 input clk,              //input clock
 input a,                //input data a, width = 4bit
 input b,                //input data b, width = 4bit
-input clk_en,           //clock enable
-input sclear,           //sychnorous clear
+input clk_en,           //clock enable, active is high
+input sclear,           //sychnorous clear, active is high
 output out              //multiply result width = 8bit
     );
 wire clk;

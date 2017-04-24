@@ -23,13 +23,13 @@
 module Native_Interface_FIFO_Simulation(
 
     );
-reg rst = 0;
-reg wr_clk = 0;
-reg rd_clk = 0;
-reg [15:0]din = 0;
-reg wr_en = 0;
-reg rd_en = 0;
-reg [15:0]counter;
+reg rst = 1'b0;
+reg wr_clk = 1'b0;
+reg rd_clk = 1'b0;
+reg [15:0]din = 16'h0000;
+reg wr_en = 1'b0;
+reg rd_en = 1'b0;
+reg [15:0]counter = 16'h0000;
 
 wire [7:0]dout;
 wire full;
@@ -47,22 +47,22 @@ always begin
 #10 rd_clk <= ~rd_clk;      //generate read clok period = 40ns
 end
 
-initial begin
-counter = 0;
-din = 0;
+initial begin               //generate din via counter
+counter = 16'h0000;
+din = 16'h0;
     forever begin
-    #10 counter <= counter + 1; 
-    din <= counter;
+    #10 counter <= counter + 1'b1; 
+    din <= 16'hff00 | counter;
     end
 end
 
 initial begin 
-wr_en = 0;
-#50 wr_en = 1'b1;           //assert write enable
+wr_en = 1'b0;
+#0 wr_en = 1'b1;           //assert write enable
 end
 
 initial begin               
-rd_en = 0;
+rd_en = 1'b0;
 #2000 rd_en = 1'b1;         //assert read enable
 end
 

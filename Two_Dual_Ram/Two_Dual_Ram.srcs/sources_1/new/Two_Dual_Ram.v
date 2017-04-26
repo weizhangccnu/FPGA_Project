@@ -35,15 +35,9 @@ reg [7:0]memory[0:255];     //define a memory, width = 8bit, depth = 256
 reg [15:0]H_data;
 reg [15:0]L_data;
 
-initial begin
-$readmemh("/home/wz/Desktop/FPGA_Project/Two_Dual_Ram/Init_Memory.txt", memory);       //Initial memory with "Init_Memory.dat"
+initial begin               //Initial memory with "Init_Memory.dat"
+$readmemh("/home/wz/Desktop/FPGA_Project/Two_Dual_Ram/Init_Memory.txt", memory);       
 end
-
-//integer i;                  //initial reg array
-//initial begin
-//for(i=0;i<256;i=i+1)
-//    memory[i] = 8'h0;
-//end
 
 always @(posedge wr_clk)    //write operation
 begin
@@ -52,8 +46,6 @@ begin
         begin
             memory[ain] <= din;
         end
-    else
-        $readmemh("/home/wz/Desktop/FPGA_Project/Two_Dual_Ram/Init_Memory.txt", memory); 
 end
 
 always @(posedge rd_clk)    //read operation

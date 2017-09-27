@@ -1,8 +1,7 @@
-module uart(clk,rst_n,rs232_rx,rs232_tx,neg_rx_int);
+module uart(clk,rst_n,rs232_rx,rs232_tx);
 input clk,rst_n;
 input rs232_rx;
 output rs232_tx;
-output neg_rx_int;
 wire bps_start1,bps_start2; //接收到数据后，波特率时钟启动信号置位
 wire clk_bps1,clk_bps2;     //clk_bps_r高电平为接收数据位的中间采样点,同时也作为发送数据的数据改变点
 wire [7:0]rx_data;          //接收数据寄存器
@@ -39,7 +38,7 @@ end
 assign neg_rx_int = ~rx_int1 & rx_int2;     //capture negedge of rx_int to reset flag
 assign neg_tx_int = tx_int0 ^ rst_pulse;    //generate a pulse
 
-always @(posedge clk)                              //???why is cont[16] as sensitive data???
+always @(posedge clk)                       
 begin
     if(!rst_n)
     begin
@@ -51,13 +50,13 @@ begin
     end
     else
     begin
-        if(neg_rx_int)
+        if(neg_rx_int)                  //to reset flag and to receive other character 
         begin
             flag <= 1'b0;
         end
-        tx_int0 <= rst_pulse;
+        tx_int0 <= rst_pulse;           //generate sent pulse
         cont <= cont + 1'b1;
-        if(cont == 17'd100000000)
+        if(cont == 17'd100000000)       //sent interval time
         begin
             cont <= 17'd0;
             if(rx_data == 8'h31 && flag == 1'b0)                //if received '1'(8'h31) 

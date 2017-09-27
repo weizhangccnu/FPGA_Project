@@ -85,39 +85,38 @@ end
 
 assign tx_data_r = tx_data;
 
-speed_select  speed_rx_inst(
+speed_select  speed_rx_inst(            //receive module baud ratio generator
 .clk(clk),
 .rst_n(rst_n),
 .clk_bps(clk_bps1),
 .bps_start(bps_start1)
 );
 		 
-speed_select  speed_tx_inst(
+speed_select  speed_tx_inst(            //sent module baud ratio generator
 .clk(clk),
 .rst_n(rst_n),
 .clk_bps(clk_bps2),
 .bps_start(bps_start2)
 );
 		 
-uart_rx  uart_rx_inst(
+uart_rx  uart_rx_inst(                  //UART receive module
 .clk(clk),
 .rst_n(rst_n),
-.rx_data(rx_data),    //??
+.rx_data(rx_data),                      
 .rx_int(rx_int),
 .clk_bps(clk_bps1),
 .bps_start(bps_start1),
 .rs232_rx(rs232_rx)
 );
 						
-uart_tx  uart_tx_inst(
-.clk(clk),
+uart_tx  uart_tx_inst(                  //UART sent module
+.clk(clk),  
 .rst_n(rst_n),
 .rx_data(tx_data_r),
 .rx_int(neg_tx_int),
 .clk_bps(clk_bps2),
 .bps_start(bps_start2),
 .rs232_tx(rs232_tx)
-);
-						
+);					
 endmodule
 		 

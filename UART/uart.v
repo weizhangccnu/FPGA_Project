@@ -53,6 +53,7 @@ begin
         if(neg_rx_int)                  //to reset flag and to receive other character 
         begin
             flag <= 1'b0;
+            cont <= 17'd0;
         end
         tx_int0 <= rst_pulse;           //generate sent pulse
         cont <= cont + 1'b1;

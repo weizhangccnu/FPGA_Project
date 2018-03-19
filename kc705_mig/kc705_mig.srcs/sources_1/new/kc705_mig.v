@@ -93,11 +93,14 @@ dbg_ila dbg_ila_inst(
 //---------------------------------------------------------> dbg_ila
 //---------------------------------------------------------< vio core
 wire [15:0]probe_in0;
+wire [31:0]probe_in1;
 wire [15:0]probe_out0;
 assign probe_in0 = {12'h000,DIPSw4Bit[3:0]};
+assign probe_in1 = gig_eth_ipv4_addr;
 vio_0 vio_0_inst (
   .clk(clk_25MHz),                // input wire clk
   .probe_in0(probe_in0),    // input wire [15 : 0] probe_in0
+  .probe_in1(probe_in1),    // input wire [31 : 0] probe_in1
   .probe_out0(probe_out0)  // output wire [15 : 0] probe_out0
 );
 //---------------------------------------------------------> vio core
@@ -143,7 +146,11 @@ wire gig_eth_rx_fifo_rdclk;
 wire gig_eth_rx_fifo_q;
 wire gig_eth_rx_fifo_rden;
 wire gig_eth_rx_fifo_empty;
-assign  set_ipv4_addr = {28'hc0a8020,DIPSw4Bit[3:0]};
+
+assign gig_eth_mac_addr = {44'h000a3502a75,DIPSw4Bit[3:0]};
+assign gig_eth_ipv4_addr = {28'hc0a8020,DIPSw4Bit[3:0]};
+assign gig_eth_subnet_mask = 32'hffffff00;
+assign gig_eth_gateway_ip_addr = 32'hc0a80201;
 //assign gpio_high = 2'b11;
 gig_eth gig_eth_inst
 (
@@ -165,11 +172,12 @@ gig_eth gig_eth_inst
    .MDIO(MDIO),
    .MDC(MDC),
 // TCP
-   .MAC_ADDR(48'h000a3502a758),
-   .IPv4_ADDR(set_ipv4_addr),
+//   .MAC_ADDR(48'h000a3502a758),
+   .MAC_ADDR(gig_eth_mac_addr),
+   .IPv4_ADDR(gig_eth_ipv4_addr),
    .IPv6_ADDR(128'h0),
-   .SUBNET_MASK(32'hffffff00),
-   .GATEWAY_IP_ADDR(32'hc0a80201),
+   .SUBNET_MASK(gig_eth_subnet_mask),
+   .GATEWAY_IP_ADDR(gig_eth_gateway_ip_addr),
    .TCP_CONNECTION_RESET(1'b0),
    .TX_TDATA(gig_eth_tx_tdata),
    .TX_TVALID(gig_eth_tx_tvalid),

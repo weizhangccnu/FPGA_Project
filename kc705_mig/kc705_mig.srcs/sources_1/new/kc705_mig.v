@@ -55,20 +55,22 @@ global_clock_reset global_clock_reset_inst(
   );
 //---------------------------------------------------------> global_clock_reset
 //---------------------------------------------------------< generate sgmii_i clock
-IBUFDS #(
-.DIFF_TERM("FALSE"),       // Differential Termination
-.IBUF_LOW_PWR("FALSE"),    // Low power="TRUE", Highest performance="FALSE" 
-.IOSTANDARD("DEFAULT")     // Specify the input I/O standard
-) 
-sgmiiclk_ibufds_inst (
-   .O(clk_sgmii_i),  // Buffer output
-   .I(SGMIICLK_Q0_P),  // Diff_p buffer input (connect directly to top-level port)
-   .IB(SGMIICLK_Q0_N) // Diff_n buffer input (connect directly to top-level port)
+IBUFDS_GTE2 #(
+   .CLKCM_CFG("TRUE"),          // Refer to Transceiver User Guide
+   .CLKRCV_TRST("TRUE"),        // Refer to Transceiver User Guide
+   .CLKSWING_CFG(2'b11)         // Refer to Transceiver User Guide
+)
+IBUFDS_GTE2_inst (
+   .O(clk_sgmii_i),             // 1-bit output: Refer to Transceiver User Guide
+   .ODIV2("open"),              // 1-bit output: Refer to Transceiver User Guide
+   .CEB(1'b0),                  // 1-bit input: Refer to Transceiver User Guide
+   .I(SGMIICLK_Q0_P),           // 1-bit input: Refer to Transceiver User Guide
+   .IB(SGMIICLK_Q0_N)           // 1-bit input: Refer to Transceiver User Guide
 );
 
-BUFG sgmiiclk_bufg_inst (
-   .O(clk_sgmii), // 1-bit output: Clock output
-   .I(clk_sgmii_i)  // 1-bit input: Clock input
+BUFG BUFG_inst (
+   .O(clk_sgmii),               // 1-bit output: Clock output
+   .I(clk_sgmii_i)              // 1-bit input: Clock input
 );
 assign clk_125MHz = clk_sgmii;
 //---------------------------------------------------------> generate sgmii_i clock

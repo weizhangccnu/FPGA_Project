@@ -94,14 +94,17 @@ dbg_ila dbg_ila_inst(
 //---------------------------------------------------------< vio core
 wire [15:0]probe_in0;
 wire [31:0]probe_in1;
+wire [255:0]probe_in2;
 wire [15:0]probe_out0;
 assign probe_in0 = {12'h000,DIPSw4Bit[3:0]};
-assign probe_in1 = gig_eth_ipv4_addr;
+assign probe_in1 = gig_eth_rx_fifo_q;
+assign probe_in2 = config_reg[255:0];
 vio_0 vio_0_inst (
-  .clk(clk_25MHz),                // input wire clk
+  .clk(clk_25MHz),         // input wire clk
   .probe_in0(probe_in0),    // input wire [15 : 0] probe_in0
   .probe_in1(probe_in1),    // input wire [31 : 0] probe_in1
-  .probe_out0(probe_out0)  // output wire [15 : 0] probe_out0
+  .probe_in2(probe_in2),    // input wire [255 : 0] probe_in2
+  .probe_out0(probe_out0)   // output wire [15 : 0] probe_out0
 );
 //---------------------------------------------------------> vio core
 reg [24:0]counter;
@@ -143,7 +146,7 @@ wire [31:0]gig_eth_tx_fifo_q;
 wire gig_eth_tx_fifo_wren;
 wire gig_eth_tx_fifo_full;
 wire gig_eth_rx_fifo_rdclk;
-wire gig_eth_rx_fifo_q;
+wire [31:0]gig_eth_rx_fifo_q;
 wire gig_eth_rx_fifo_rden;
 wire gig_eth_rx_fifo_empty;
 
@@ -172,7 +175,6 @@ gig_eth gig_eth_inst
    .MDIO(MDIO),
    .MDC(MDC),
 // TCP
-//   .MAC_ADDR(48'h000a3502a758),
    .MAC_ADDR(gig_eth_mac_addr),
    .IPv4_ADDR(gig_eth_ipv4_addr),
    .IPv6_ADDR(128'h0),
@@ -196,10 +198,70 @@ gig_eth gig_eth_inst
    .RX_FIFO_RDEN(gig_eth_rx_fifo_rden),
    .RX_FIFO_EMPTY(gig_eth_rx_fifo_empty)
 );
+assign gig_eth_tcp_use_fifo = 1'b1;
+assign gig_eth_rx_fifo_rdclk = control_clk;
 //---------------------------------------------------------> gig_eth
 //---------------------------------------------------------< control_interface
 wire control_clk;
+wire [35:0]control_fifo_q;
+wire control_fifo_empty;
+wire control_fifo_rdreq;
+wire control_fifo_rdclk;
+
+wire [35:0]cmd_fifo_q;
+wire cmd_fifo_empty;
+wire cmd_fifo_rdreq;
+
+wire [511:0]config_reg;
+wire [15:0]pulse_reg;
+wire [175:0]status_reg;
+
+wire control_mem_we;
+wire [31:0]control_mem_addr;
+wire [31:0]control_mem_din;
+
+wire idata_data_fifo_rdclk;
+wire idata_data_fifo_empty;
+wire idata_data_fifo_rden;
+wire [31:0]idata_data_fifo_dout;
 assign control_clk = clk_100MHz;
+
+control_interface  control_interface_inst(
+   .RESET(reset),
+   .CLK(control_clk),
+  // From FPGA to PC
+   .FIFO_Q(control_fifo_q),
+   .FIFO_EMPTY(control_fifo_empty),
+   .FIFO_RDREQ(control_fifo_rdreq),
+   .FIFO_RDCLK(control_fifo_rdclk),
+  // From PC to FPGA, FWFT
+   .CMD_FIFO_Q(cmd_fifo_q),
+   .CMD_FIFO_EMPTY(cmd_fifo_empty),
+   .CMD_FIFO_RDREQ(cmd_fifo_rdreq),
+  // Digital I/O
+   .CONFIG_REG(config_reg),
+   .PULSE_REG(pulse_reg),
+   .STATUS_REG(status_reg),
+  // Memory interface
+   .MEM_WE(control_mem_we),
+   .MEM_ADDR(control_mem_addr),
+   .MEM_DIN(control_mem_din),
+   .MEM_DOUT(),
+  // Data FIFO interface, FWFT
+   .DATA_FIFO_Q(idata_data_fifo_dout),
+   .DATA_FIFO_EMPTY(idata_data_fifo_empty),
+   .DATA_FIFO_RDREQ(idata_data_fifo_rden),
+   .DATA_FIFO_RDCLK(idata_data_fifo_rdclk)
+);
+assign cmd_fifo_q = gig_eth_rx_fifo_q;
+assign cmd_fifo_empty = gig_eth_rx_fifo_empty;
+assign gig_eth_rx_fifo_rden = cmd_fifo_rdreq;
+
+assign gig_eth_tx_fifo_wrclk = clk_125MHz;
+assign control_fifo_rdclk = gig_eth_tx_fifo_wrclk;
+assign gig_eth_tx_fifo_q = control_fifo_q[31:0];
+assign gig_eth_tx_fifo_wren = ~control_fifo_empty;
+assign control_fifo_rdreq = ~gig_eth_tx_fifo_full;
 //---------------------------------------------------------> control_interface
 //---------------------------------------------------------< mig_7series_0
 //  mig_7series_0 mig_7series_0_inst (

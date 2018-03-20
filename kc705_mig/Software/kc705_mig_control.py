@@ -15,13 +15,16 @@ port = 1024									#port number
 #--------------------------------------------------------------------------#
 def main():
     print "1234"
+
     while 1:
-        cmd_interpret.write_config_reg(0, 0xaaaa)
-        time.sleep(1)
-        print "Output 0xaaaa"
-        cmd_interpret.write_config_reg(0, 0x5555)
-        time.sleep(1)
-        print "Output 0x5555"
+        for i in xrange(16):
+            cmd_interpret.write_config_reg(i, 0xaaaa)
+            print "Output 0xaaaa"
+        time.sleep(2)
+        for i in xrange(16):
+            cmd_interpret.write_config_reg(i, 0x5555)
+            print "Output 0x5555"
+        time.sleep(2)
 #--------------------------------------------------------------------------#
 if __name__ == "__main__":
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)	#initial socket

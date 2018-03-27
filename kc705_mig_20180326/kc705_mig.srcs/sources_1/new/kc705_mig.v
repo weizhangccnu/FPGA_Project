@@ -112,19 +112,21 @@ dbg_ila dbg_ila_inst(
 );
 //---------------------------------------------------------> dbg_ila
 //---------------------------------------------------------< vio core
-wire [15:0]probe_in0;
-wire [31:0]probe_in1;
-wire [255:0]probe_in2;
-wire [15:0]probe_out0;
+wire [15:0] probe_in0;
+wire [31:0] probe_in1;
+wire [255:0] probe_in2;
+wire [55:0] probe_in3;
+wire [15:0] probe_out0;
 assign probe_in0 = {12'h000,DIPSw4Bit[3:0]};
 assign probe_in1 = gig_eth_rx_fifo_q;
 assign probe_in2 = config_reg[255:0];
+assign probe_in3 = {wr_pointer, trigger_pointer};
 vio_0 vio_0_inst (
-  .clk(clk_25MHz),         // input wire clk
+  .clk(clk_25MHz),          // input wire clk
   .probe_in0(probe_in0),    // input wire [15 : 0] probe_in0
   .probe_in1(probe_in1),    // input wire [31 : 0] probe_in1
   .probe_in2(probe_in2),    // input wire [255 : 0] probe_in2
-  
+  .probe_in3(probe_in3),    // input wire [55 : 0] probe_in3
   .probe_out0(probe_out0)   // output wire [15 : 0] probe_out0
 );
 //---------------------------------------------------------> vio core
@@ -147,8 +149,8 @@ assign LED8Bit[1] = counter[24];
 assign LED8Bit[2] = select?counter[22]:counter[24];
 assign LED8Bit[3] = select?counter[22]:counter[24];
 assign LED8Bit[4] = select?counter[22]:counter[24];
-assign LED8Bit[5] = select?counter[22]:counter[24];
-assign LED8Bit[6] = select?counter[22]:counter[24];
+//assign LED8Bit[5] = select?counter[22]:counter[24];
+//assign LED8Bit[6] = select?counter[22]:counter[24];
 //assign LED8Bit[7] = select?counter[22]:counter[24];
 //---------------------------------------------------------< gig_eth 
 wire [47:0]gig_eth_mac_addr;
@@ -292,11 +294,13 @@ wire idata_idata_fifo_wrclk;
 wire [255:0] idata_idata_fifo_q;
 wire idata_idata_fifo_full;
 wire idata_idata_fifo_wren;
+wire [27:0] wr_pointer;
+wire [27:0] trigger_pointer;
 
-wire idata_data_fifo_rdclk;
-wire [31:0] idata_data_fifo_dout;
-wire idata_data_fifo_empty;
-wire idata_data_fifo_rden;
+//wire idata_data_fifo_rdclk;
+//wire [31:0] idata_data_fifo_dout;
+//wire idata_data_fifo_empty;
+//wire idata_data_fifo_rden;
 
 wire [27:0] sdram_app_addr;
 wire sdram_app_en;
@@ -340,14 +344,14 @@ sdram_ddr3 sdram_ddr3_inst(
 .WR_STOP(pulse_reg[4]),
 .WR_WRAP_AROUND(config_reg[32*4+28]),
 .POST_TRIGGER(config_reg[32*5+27:32*5]),
-.WR_BUSY(idata_data_wr_busy),
-.WR_POINTER("open"),
-.TRIGGER_POINTER("open"),
+.WR_BUSY(LED8Bit[6]),
+.WR_POINTER(wr_pointer),
+.TRIGGER_POINTER(trigger_pointer),
 .WR_WRAPPED(idata_data_wr_wrapped),
 .RD_START(pulse_reg[5]),
 .RD_ADDR_BEGIN(28'h0000000),
 .RD_ADDR_END(config_reg[32*6+27:32*6]),
-.RD_BUSY("open"),
+.RD_BUSY(LED8Bit[5]),
 //
 .DATA_FIFO_RESET(idata_data_fifo_reset),
 .INDATA_FIFO_WRCLK(idata_idata_fifo_wrclk),
@@ -370,5 +374,23 @@ sdram_ddr3 sdram_ddr3_inst(
 .DBG_APP_RD_DATA(sdram_app_rd_data),
 .DBG_APP_RD_DATA_VALID(sdram_app_rd_data_valid)
   );
+assign idata_idata_fifo_wrclk = clk_25MHz;
+assign idata_idata_fifo_q = fifo_data_out;
+assign idata_idata_fifo_wren = ~fifo_empty;
+assign fifo_rd_en = ~idata_idata_fifo_full;
 //---------------------------------------------------------> mig_7series_0
+//---------------------------------------------------------< create_input_data
+wire fifo_rd_en;
+wire [255:0] fifo_data_out;
+wire fifo_empty;
+create_input_data create_input_data_inst(
+.clk(clk_25MHz),                //input clock
+.reset(reset),                  //system reset
+.fifo_wr_en(1'b1),
+.fifo_rd_clk(clk_25MHz),
+.fifo_rd_en(fifo_rd_en),
+.fifo_data_out(fifo_data_out),
+.fifo_empty(fifo_empty)
+);
+//---------------------------------------------------------> create_input_data
 endmodule

@@ -27,6 +27,7 @@ def write_data_into_ddr3(wr_wrap, wr_begin_addr, post_trigger_addr):
     cmd_interpret.write_config_reg(11, 0xffff & (post_trigger_addr >> 16))
 #--------------------------------------------------------------------------#
 ## DDR3 read data from fifo to ethernet
+# @param[in] rd_begin_addr: read data start address
 def read_data_from_ddr3(rd_begin_addr):
     cmd_interpret.write_config_reg(12, 0xffff & rd_begin_addr)
     cmd_interpret.write_config_reg(13, 0xffff & (rd_begin_addr >> 16))
@@ -34,18 +35,25 @@ def read_data_from_ddr3(rd_begin_addr):
 #--------------------------------------------------------------------------#
 ## main function
 def main():
-    cmd_interpret.write_pulse_reg(0x0040)           # reset ddr3 data fifo
-    time.sleep(0.1)
-    write_data_into_ddr3(1, 0x0000000, 0x1000000)   # set write begin address and post trigger address and wrap around
-    cmd_interpret.write_pulse_reg(0x0008)           # writing start 
-    #time.sleep(5)
-    cmd_interpret.write_pulse_reg(0x0010)           # writing stop 
-    time.sleep(10)
-    read_data_from_ddr3(0x2000000)                  # set read begin address
+    cmd_interpret.write_config_reg(0, 0x0000)       # writen disable
+    cmd_interpret.write_pulse_reg(0x0040)           # reset ddr3 control logic 
+    cmd_interpret.write_pulse_reg(0x0004)           # reset ddr3 data fifo
+    print "sent pulse!"
 
-    for i in xrange(100):
+    cmd_interpret.write_config_reg(0, 0x0001)       # writen enable
+
+    write_data_into_ddr3(1, 0x0000000, 0x0100000)   # set write begin address and post trigger address and wrap around
+    cmd_interpret.write_pulse_reg(0x0008)           # writing start 
+    cmd_interpret.write_pulse_reg(0x0010)           # writing stop 
+
+    time.sleep(0.05)
+    cmd_interpret.write_config_reg(0, 0x0000)       # write enable
+    time.sleep(5)
+    read_data_from_ddr3(0x0100000)                  # set read begin address
+
+    for i in xrange(1):
         cmd_interpret.read_data_fifo(50000)         # reading start 
-    #print "Ok!"
+    print "Ok!"
 #--------------------------------------------------------------------------#
 ## if statement
 if __name__ == "__main__":

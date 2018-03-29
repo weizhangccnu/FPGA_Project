@@ -106,9 +106,9 @@ assign clk_125MHz = clk_sgmii;
 wire probe1;
 assign probe1 = pulse_reg[6:3];
 dbg_ila dbg_ila_inst(
-	.clk(clk_25MHz),               // input wire clk
-	.probe0(counter[3:0]),         // input wire [3:0] probe0
-    .probe1(probe1)             // input wire [3:0]  probe1
+	.clk(clk_25MHz),                // input wire clk
+	.probe0(counter[3:0]),          // input wire [3:0] probe0
+    .probe1(probe1)                 // input wire [3:0]  probe1
 );
 //---------------------------------------------------------> dbg_ila
 //---------------------------------------------------------< vio core
@@ -116,17 +116,20 @@ wire [15:0] probe_in0;
 wire [31:0] probe_in1;
 wire [255:0] probe_in2;
 wire [55:0] probe_in3;
+wire [255:0] probe_in4;
 wire [15:0] probe_out0;
 assign probe_in0 = {12'h000,DIPSw4Bit[3:0]};
 assign probe_in1 = gig_eth_rx_fifo_q;
 assign probe_in2 = config_reg[255:0];
 assign probe_in3 = {wr_pointer, trigger_pointer};
+assign probe_in4 = fifo_data_out;
 vio_0 vio_0_inst (
   .clk(clk_25MHz),          // input wire clk
   .probe_in0(probe_in0),    // input wire [15 : 0] probe_in0
   .probe_in1(probe_in1),    // input wire [31 : 0] probe_in1
   .probe_in2(probe_in2),    // input wire [255 : 0] probe_in2
   .probe_in3(probe_in3),    // input wire [55 : 0] probe_in3
+  .probe_in4(probe_in4),    // input wire [255 : 0] probe_in4
   .probe_out0(probe_out0)   // output wire [15 : 0] probe_out0
 );
 //---------------------------------------------------------> vio core
@@ -287,6 +290,7 @@ assign gig_eth_tx_fifo_wren = ~control_fifo_empty;
 assign control_fifo_rdreq = ~gig_eth_tx_fifo_full;
 //---------------------------------------------------------> control_interface
 //---------------------------------------------------------< mig_7series_0
+wire idata_data_fifo_reset;
 wire idata_data_wr_busy;
 wire idata_data_wr_wrapped;
 wire idata_data_fifo_reset;
@@ -378,15 +382,16 @@ assign idata_idata_fifo_wrclk = clk_25MHz;
 assign idata_idata_fifo_q = fifo_data_out;
 assign idata_idata_fifo_wren = ~fifo_empty;
 assign fifo_rd_en = ~idata_idata_fifo_full;
+assign idata_data_fifo_reset = pulse_reg[2];
 //---------------------------------------------------------> mig_7series_0
 //---------------------------------------------------------< create_input_data
 wire fifo_rd_en;
 wire [255:0] fifo_data_out;
 wire fifo_empty;
 create_input_data create_input_data_inst(
-.clk(clk_25MHz),                //input clock
-.reset(reset),                  //system reset
-.fifo_wr_en(1'b1),
+.clk(control_clk),                               //input clock
+.reset(pulse_reg[6]),                           //system reset
+.fifo_wr_en(config_reg[0]),
 .fifo_rd_clk(clk_25MHz),
 .fifo_rd_en(fifo_rd_en),
 .fifo_data_out(fifo_data_out),

@@ -27,10 +27,10 @@ def write_data_into_ddr3(wr_wrap, wr_begin_addr, post_trigger_addr):
     cmd_interpret.write_config_reg(11, 0xffff & (post_trigger_addr >> 16))
 #--------------------------------------------------------------------------#
 ## DDR3 read data from fifo to ethernet
-# @param[in] rd_begin_addr: read data start address
-def read_data_from_ddr3(rd_begin_addr):
-    cmd_interpret.write_config_reg(12, 0xffff & rd_begin_addr)
-    cmd_interpret.write_config_reg(13, 0xffff & (rd_begin_addr >> 16))
+# @param[in] rd_stop_addr: read data start address
+def read_data_from_ddr3(rd_stop_addr):
+    cmd_interpret.write_config_reg(12, 0xffff & rd_stop_addr)
+    cmd_interpret.write_config_reg(13, 0xffff & (rd_stop_addr >> 16))
     cmd_interpret.write_pulse_reg(0x0020)           # reading start 
 #--------------------------------------------------------------------------#
 ## main function
@@ -42,17 +42,17 @@ def main():
 
     cmd_interpret.write_config_reg(0, 0x0001)       # writen enable
 
-    write_data_into_ddr3(1, 0x0000000, 0x0100000)   # set write begin address and post trigger address and wrap around
+    write_data_into_ddr3(1, 0x0000000, 0x1000000)   # set write begin address and post trigger address and wrap around
     cmd_interpret.write_pulse_reg(0x0008)           # writing start 
     cmd_interpret.write_pulse_reg(0x0010)           # writing stop 
 
-    time.sleep(0.05)
+    time.sleep(1)
     cmd_interpret.write_config_reg(0, 0x0000)       # write enable
-    time.sleep(5)
-    read_data_from_ddr3(0x0100000)                  # set read begin address
+    time.sleep(2)
+    read_data_from_ddr3(0x1000000)                  # set read begin address
 
     for i in xrange(1):
-        cmd_interpret.read_data_fifo(50000)         # reading start 
+        cmd_interpret.read_data_fifo(10)         # reading start 
     print "Ok!"
 #--------------------------------------------------------------------------#
 ## if statement

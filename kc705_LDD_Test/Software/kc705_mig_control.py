@@ -79,7 +79,7 @@ def iic_read(mode, slave_addr, wr, reg_addr):
     pass
 #--------------------------------------------------------------------------#
 ## capture oscilloscope screen image via GPIB interface 
-def capture_screen_image(filename):
+def capture_screen_image(filename, mode):
 	rm = visa.ResourceManager()
 	print rm.list_resources()
 	inst = rm.open_resource('GPIB0::7::INSTR')
@@ -88,24 +88,42 @@ def capture_screen_image(filename):
 	time.sleep(0.5)
 	#inst.write(":SYSTem:MODE EYE")
 	#time.sleep(20)
-	inst.write(":SYSTem:MODE JITTer")					#set the instrument mode to Jitter mode
-	print inst.query(":DISPlay:JITTer:GRAPh?")
-	inst.write(":ACQuire:RUNTil PATTerns,30")			#set patten frame to 30
-	inst.write(":ACQuire:SSCReen DISK, '%s'"%filename)	#save screen image to disk
-	inst.write(":ACQuire:SSCReen:AREA SCReen")			#capture screen area 
-	inst.write(":ACQuire:SSCReen:IMAGe INVert")			#remove black background
-	inst.write(":ACQuire:SSCReen:AREA SCReen")			#capture screen area 
+	if mode == 1:
+		inst.write(":SYSTem:MODE JITTer")					#set the instrument to Jitter mode
+		print inst.query(":DISPlay:JITTer:GRAPh?")
+		inst.write(":ACQuire:RUNTil PATTerns,30")			#set patten frame to 30
+		inst.write(":ACQuire:SSCReen DISK, '%s'"%filename)	#save screen image to disk
+		inst.write(":ACQuire:SSCReen:AREA SCReen")			#capture screen area 
+		inst.write(":ACQuire:SSCReen:IMAGe INVert")			#remove black background
+		inst.write(":ACQuire:SSCReen:AREA SCReen")			#capture screen area 
+		time.sleep(35)										#delay for acquire limite
+	else:
+		inst.write(":SYSTem:MODE EYE")						#set the instrument to Eye/Mask Mode
+		time.sleep(1)
+		inst.write(":AUToscale")							#Autoscale instrument
+		time.sleep(0.5)
+		inst.write(":MEASure:CGRade:ZLEvel CHANnel1")		#Measure Zero level 
+		inst.write(":MEASure:CGRade:OLEvel CHANnel1")		#Measure One level
+		inst.write(":MEASure:FALLtime CHANnel1")			#Measure Rise time 
+		inst.write(":MEASure:RISetime CHANnel1")			#Measure Rise time 
+
+		inst.write(":ACQuire:EYELine ON")					#turn eyeline one 
+		inst.write(":ACQuire:LTESt ALL")					#turn on limite acquire all channel
+		inst.write(":ACQuire:RUNTil WAVeforms,300")			#set patten frame to 30
+		inst.write(":ACQuire:SSCReen DISK, '%s'"%filename)	#save screen image to disk
+		inst.write(":ACQuire:SSCReen:AREA SCReen")			#capture screen area 
+		inst.write(":ACQuire:SSCReen:IMAGe INVert")			#remove black background
+		time.sleep(16)										#delay for acquire limite
 	print "capture screen image over!"
-	inst.close()
 #--------------------------------------------------------------------------#
 ## Scan parameter of LLD register
 def Scan_parameter(reg1, reg2):
 	print hex(reg1), hex(reg2)
 	reg_data = [0x40, 0x12,\
                 0x40, 0x12,\
-                0x40, 0x12,\
+                0x1c, 0x12,\
                 reg1, reg2,\
-                0x40, 0x12,\
+                0x1c, 0x12,\
                 0x40, 0x12,\
                 0x40, 0x12,\
                 0x40, 0x12,\
@@ -124,31 +142,24 @@ def Scan_parameter(reg1, reg2):
 ## main function
 def main():
 	#test_ddr3() 
-	Channel_number = 9
-	Ibias = 4 
-	#Pre_Em = 3
-	Eq = 0
-	Imod = 2 
-	for i in xrange(16):				#scan Ibias
-		for j in xrange(4):				#scan Per_Em
-			for k in xrange(4):			#scan Eq
-				for l in xrange(16):	#scan Imod
-					Ibias = i
-					Pre_Em = j
-					Eq = k
-					Imod = l
-					reg1 = (Ibias << 4) | (Pre_Em << 2) | Eq
-					reg2 = 0x0f & Imod
-					if Ibias == 0:
-						filename = 'E:\ScreenImage_20180518\Board4_CH%d_%02x_%02x_10G_100mV_1_8Bias.bmp'%(Channel_number, reg1, reg2)
-					else:
-						filename = 'E:\ScreenImage_20180518\Board4_CH%d_%2x_%02x_10G_100mV_1_8Bias.bmp'%(Channel_number, reg1, reg2)
-					print filename
-					Scan_parameter(reg1,reg2)
-					time.sleep(1)
-					capture_screen_image(filename)
-					time.sleep(34)
-					print "Scan Over"
+	mode = 2							# '1' denotes Jitter mode, '2' denotes Eye/Mask mode
+	Channel_number = 9					# LDD channel number
+	Ibias = 1							# Ibias 4-bit
+	Pre_Em = 3							# Pre_emphasis 2-bit
+	Eq = 0								# Equalizer 2-bit
+	Imod = 2							# Imod 2-bit
+	#for i in xrange(16):				#scan Ibias
+	#	for j in xrange(16):			#scan Imod
+	#Ibias = i
+	#Imod = j
+	reg1 = (Ibias << 4) | (Pre_Em << 2) | Eq
+	reg2 = (0x0f & Imod) | 0x00
+	filename = 'E:\ScreenImage_20180519_Crosstalk\Board4_CH%d_%02x_%02x_10G_100mV_1_8Bias_RemoveCH8CH10.bmp'%(Channel_number, reg1, reg2)
+	print filename
+	Scan_parameter(reg1,reg2)
+	time.sleep(1)
+	capture_screen_image(filename, mode)
+	print "Scan Over!\n"
 	print "Ok"
 #--------------------------------------------------------------------------#
 ## if statement

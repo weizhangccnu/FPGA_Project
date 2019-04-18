@@ -1,0 +1,936 @@
+$date
+    Apr 18, 2019  16:36:06
+$end
+$version
+    TOOL:	ncsim(64)	15.20-s036
+$end
+$timescale
+    1 ps
+$end
+
+$scope module TOA_Encoder_tb $end
+$var reg      63 !    TOARaw [62:0] $end
+$var reg       3 "    TOACntA [2:0] $end
+$var reg       3 #    TOACntB [2:0] $end
+$var wire      3 $    outputCoarsePhase [2:0] $end
+$var wire      7 %    outputFinePhase [6:0] $end
+$var wire      1 &    errorFlag  $end
+$var integer  32 '    level  $end
+$var integer  32 (    offset  $end
+$var integer  32 )    selRawCode  $end
+
+$scope module TOA_Encoder_tt $end
+$var wire     63 *    A [62:0] $end
+$var wire      3 +    level [2:0] $end
+$var wire      3 ,    counterA [2:0] $end
+$var wire      3 -    counterB [2:0] $end
+$var wire      7 .    offset [6:0] $end
+$var wire      1 /    selRawCode  $end
+$var wire      3 $    outputCoarsePhase [2:0] $end
+$var wire      7 %    outputFinePhase [6:0] $end
+$var wire      1 &    errorFlag  $end
+$var wire      1 0    finePhase [6] $end
+$var wire      1 1    finePhase [5] $end
+$var wire      1 2    finePhase [4] $end
+$var wire      1 3    finePhase [3] $end
+$var wire      1 4    finePhase [2] $end
+$var wire      1 5    finePhase [1] $end
+$var wire      1 6    finePhase [0] $end
+$var wire      1 7    selA  $end
+$var wire      3 8    correctedCoarsePhase [2:0] $end
+$var wire      3 9    rawCoarsePhase [2:0] $end
+$var wire     10 :    combinedCode [9:0] $end
+
+$scope module U_fineEnc $end
+$var wire     63 *    encode_In [62:0] $end
+$var wire      3 +    level [2:0] $end
+$var wire      1 0    Binary_Out [6] $end
+$var wire      1 1    Binary_Out [5] $end
+$var wire      1 2    Binary_Out [4] $end
+$var wire      1 3    Binary_Out [3] $end
+$var wire      1 4    Binary_Out [2] $end
+$var wire      1 5    Binary_Out [1] $end
+$var wire      1 6    Binary_Out [0] $end
+$var wire      1 ;    Data [62] $end
+$var wire      1 <    Data [61] $end
+$var wire      1 =    Data [60] $end
+$var wire      1 >    Data [59] $end
+$var wire      1 ?    Data [58] $end
+$var wire      1 @    Data [57] $end
+$var wire      1 A    Data [56] $end
+$var wire      1 B    Data [55] $end
+$var wire      1 C    Data [54] $end
+$var wire      1 D    Data [53] $end
+$var wire      1 E    Data [52] $end
+$var wire      1 F    Data [51] $end
+$var wire      1 G    Data [50] $end
+$var wire      1 H    Data [49] $end
+$var wire      1 I    Data [48] $end
+$var wire      1 J    Data [47] $end
+$var wire      1 K    Data [46] $end
+$var wire      1 L    Data [45] $end
+$var wire      1 M    Data [44] $end
+$var wire      1 N    Data [43] $end
+$var wire      1 O    Data [42] $end
+$var wire      1 P    Data [41] $end
+$var wire      1 Q    Data [40] $end
+$var wire      1 R    Data [39] $end
+$var wire      1 S    Data [38] $end
+$var wire      1 T    Data [37] $end
+$var wire      1 U    Data [36] $end
+$var wire      1 V    Data [35] $end
+$var wire      1 W    Data [34] $end
+$var wire      1 X    Data [33] $end
+$var wire      1 Y    Data [32] $end
+$var wire      1 Z    Data [31] $end
+$var wire      1 [    Data [30] $end
+$var wire      1 \    Data [29] $end
+$var wire      1 ]    Data [28] $end
+$var wire      1 ^    Data [27] $end
+$var wire      1 _    Data [26] $end
+$var wire      1 `    Data [25] $end
+$var wire      1 a    Data [24] $end
+$var wire      1 b    Data [23] $end
+$var wire      1 c    Data [22] $end
+$var wire      1 d    Data [21] $end
+$var wire      1 e    Data [20] $end
+$var wire      1 f    Data [19] $end
+$var wire      1 g    Data [18] $end
+$var wire      1 h    Data [17] $end
+$var wire      1 i    Data [16] $end
+$var wire      1 j    Data [15] $end
+$var wire      1 k    Data [14] $end
+$var wire      1 l    Data [13] $end
+$var wire      1 m    Data [12] $end
+$var wire      1 n    Data [11] $end
+$var wire      1 o    Data [10] $end
+$var wire      1 p    Data [9] $end
+$var wire      1 q    Data [8] $end
+$var wire      1 r    Data [7] $end
+$var wire      1 s    Data [6] $end
+$var wire      1 t    Data [5] $end
+$var wire      1 u    Data [4] $end
+$var wire      1 v    Data [3] $end
+$var wire      1 w    Data [2] $end
+$var wire      1 x    Data [1] $end
+$var wire      1 y    Data [0] $end
+
+$scope begin XNOR2LOOP[0] $end
+$var parameter 32 z    gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[1] $end
+$var parameter 32 {    gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[2] $end
+$var parameter 32 |    gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[3] $end
+$var parameter 32 }    gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[4] $end
+$var parameter 32 ~    gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[5] $end
+$var parameter 32 !!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[6] $end
+$var parameter 32 "!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[7] $end
+$var parameter 32 #!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[8] $end
+$var parameter 32 $!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[9] $end
+$var parameter 32 %!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[10] $end
+$var parameter 32 &!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[11] $end
+$var parameter 32 '!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[12] $end
+$var parameter 32 (!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[13] $end
+$var parameter 32 )!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[14] $end
+$var parameter 32 *!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[15] $end
+$var parameter 32 +!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[16] $end
+$var parameter 32 ,!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[17] $end
+$var parameter 32 -!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[18] $end
+$var parameter 32 .!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[19] $end
+$var parameter 32 /!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[20] $end
+$var parameter 32 0!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[21] $end
+$var parameter 32 1!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[22] $end
+$var parameter 32 2!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[23] $end
+$var parameter 32 3!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[24] $end
+$var parameter 32 4!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[25] $end
+$var parameter 32 5!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[26] $end
+$var parameter 32 6!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[27] $end
+$var parameter 32 7!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[28] $end
+$var parameter 32 8!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[29] $end
+$var parameter 32 9!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[30] $end
+$var parameter 32 :!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[31] $end
+$var parameter 32 ;!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[32] $end
+$var parameter 32 <!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[33] $end
+$var parameter 32 =!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[34] $end
+$var parameter 32 >!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[35] $end
+$var parameter 32 ?!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[36] $end
+$var parameter 32 @!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[37] $end
+$var parameter 32 A!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[38] $end
+$var parameter 32 B!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[39] $end
+$var parameter 32 C!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[40] $end
+$var parameter 32 D!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[41] $end
+$var parameter 32 E!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[42] $end
+$var parameter 32 F!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[43] $end
+$var parameter 32 G!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[44] $end
+$var parameter 32 H!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[45] $end
+$var parameter 32 I!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[46] $end
+$var parameter 32 J!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[47] $end
+$var parameter 32 K!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[48] $end
+$var parameter 32 L!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[49] $end
+$var parameter 32 M!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[50] $end
+$var parameter 32 N!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[51] $end
+$var parameter 32 O!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[52] $end
+$var parameter 32 P!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[53] $end
+$var parameter 32 Q!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[54] $end
+$var parameter 32 R!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[55] $end
+$var parameter 32 S!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[56] $end
+$var parameter 32 T!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[57] $end
+$var parameter 32 U!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[58] $end
+$var parameter 32 V!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[59] $end
+$var parameter 32 W!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[60] $end
+$var parameter 32 X!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[61] $end
+$var parameter 32 Y!   gi [31:0] $end
+$upscope $end
+
+
+$scope begin XNOR2LOOP[62] $end
+$var parameter 32 Z!   gi [31:0] $end
+$upscope $end
+
+
+$scope module Encoder1 $end
+$var wire      1 ;    encode_In [62] $end
+$var wire      1 <    encode_In [61] $end
+$var wire      1 =    encode_In [60] $end
+$var wire      1 >    encode_In [59] $end
+$var wire      1 ?    encode_In [58] $end
+$var wire      1 @    encode_In [57] $end
+$var wire      1 A    encode_In [56] $end
+$var wire      1 B    encode_In [55] $end
+$var wire      1 C    encode_In [54] $end
+$var wire      1 D    encode_In [53] $end
+$var wire      1 E    encode_In [52] $end
+$var wire      1 F    encode_In [51] $end
+$var wire      1 G    encode_In [50] $end
+$var wire      1 H    encode_In [49] $end
+$var wire      1 I    encode_In [48] $end
+$var wire      1 J    encode_In [47] $end
+$var wire      1 K    encode_In [46] $end
+$var wire      1 L    encode_In [45] $end
+$var wire      1 M    encode_In [44] $end
+$var wire      1 N    encode_In [43] $end
+$var wire      1 O    encode_In [42] $end
+$var wire      1 P    encode_In [41] $end
+$var wire      1 Q    encode_In [40] $end
+$var wire      1 R    encode_In [39] $end
+$var wire      1 S    encode_In [38] $end
+$var wire      1 T    encode_In [37] $end
+$var wire      1 U    encode_In [36] $end
+$var wire      1 V    encode_In [35] $end
+$var wire      1 W    encode_In [34] $end
+$var wire      1 X    encode_In [33] $end
+$var wire      1 Y    encode_In [32] $end
+$var wire      1 Z    encode_In [31] $end
+$var wire      1 [    encode_In [30] $end
+$var wire      1 \    encode_In [29] $end
+$var wire      1 ]    encode_In [28] $end
+$var wire      1 ^    encode_In [27] $end
+$var wire      1 _    encode_In [26] $end
+$var wire      1 `    encode_In [25] $end
+$var wire      1 a    encode_In [24] $end
+$var wire      1 b    encode_In [23] $end
+$var wire      1 c    encode_In [22] $end
+$var wire      1 d    encode_In [21] $end
+$var wire      1 e    encode_In [20] $end
+$var wire      1 f    encode_In [19] $end
+$var wire      1 g    encode_In [18] $end
+$var wire      1 h    encode_In [17] $end
+$var wire      1 i    encode_In [16] $end
+$var wire      1 j    encode_In [15] $end
+$var wire      1 k    encode_In [14] $end
+$var wire      1 l    encode_In [13] $end
+$var wire      1 m    encode_In [12] $end
+$var wire      1 n    encode_In [11] $end
+$var wire      1 o    encode_In [10] $end
+$var wire      1 p    encode_In [9] $end
+$var wire      1 q    encode_In [8] $end
+$var wire      1 r    encode_In [7] $end
+$var wire      1 s    encode_In [6] $end
+$var wire      1 t    encode_In [5] $end
+$var wire      1 u    encode_In [4] $end
+$var wire      1 v    encode_In [3] $end
+$var wire      1 w    encode_In [2] $end
+$var wire      1 x    encode_In [1] $end
+$var wire      1 y    encode_In [0] $end
+$var wire      3 +    level [2:0] $end
+$var wire      1 1    Binary_Out [5] $end
+$var wire      1 2    Binary_Out [4] $end
+$var wire      1 3    Binary_Out [3] $end
+$var wire      1 4    Binary_Out [2] $end
+$var wire      1 5    Binary_Out [1] $end
+$var wire      1 6    Binary_Out [0] $end
+$var wire     64 [!   Din [63:0] $end
+$var wire      1 \!   ORA [7] $end
+$var wire      1 ]!   ORA [6] $end
+$var wire      1 ^!   ORA [5] $end
+$var wire      1 _!   ORA [4] $end
+$var wire      1 `!   ORA [3] $end
+$var wire      1 a!   ORA [2] $end
+$var wire      1 b!   ORA [1] $end
+$var wire      1 c!   ORA [0] $end
+$var wire      1 d!   ORB [7] $end
+$var wire      1 e!   ORB [6] $end
+$var wire      1 f!   ORB [5] $end
+$var wire      1 g!   ORB [4] $end
+$var wire      1 h!   ORB [3] $end
+$var wire      1 i!   ORB [2] $end
+$var wire      1 j!   ORB [1] $end
+$var wire      1 k!   ORB [0] $end
+$var wire      8 l!   LSB8bCode [7:0] $end
+$var wire      3 m!   MSB3b [2:0] $end
+$var wire      3 n!   LSB3b [2:0] $end
+$var wire      1 o!   MSBerror  $end
+$var wire      1 p!   LSBerror  $end
+$var wire      3 q!   offset [2:0] $end
+$var reg       1 r!   MSBerrorA  $end
+$var reg       1 s!   MSBerrorB  $end
+$var reg       3 t!   MSB3bA [2:0] $end
+$var reg       3 u!   MSB3bB [2:0] $end
+$var reg       8 v!   LSB8bCodeA [7:0] $end
+$var reg       8 w!   LSB8bCodeB [7:0] $end
+
+$scope module U_OR64 $end
+$var wire     64 [!   A [63:0] $end
+$var wire      1 \!   ORA [7] $end
+$var wire      1 ]!   ORA [6] $end
+$var wire      1 ^!   ORA [5] $end
+$var wire      1 _!   ORA [4] $end
+$var wire      1 `!   ORA [3] $end
+$var wire      1 a!   ORA [2] $end
+$var wire      1 b!   ORA [1] $end
+$var wire      1 c!   ORA [0] $end
+$var wire      1 d!   ORB [7] $end
+$var wire      1 e!   ORB [6] $end
+$var wire      1 f!   ORB [5] $end
+$var wire      1 g!   ORB [4] $end
+$var wire      1 h!   ORB [3] $end
+$var wire      1 i!   ORB [2] $end
+$var wire      1 j!   ORB [1] $end
+$var wire      1 k!   ORB [0] $end
+$var wire      1 x!   OR4A [15] $end
+$var wire      1 y!   OR4A [14] $end
+$var wire      1 z!   OR4A [13] $end
+$var wire      1 {!   OR4A [12] $end
+$var wire      1 |!   OR4A [11] $end
+$var wire      1 }!   OR4A [10] $end
+$var wire      1 ~!   OR4A [9] $end
+$var wire      1 !"   OR4A [8] $end
+$var wire      1 ""   OR4A [7] $end
+$var wire      1 #"   OR4A [6] $end
+$var wire      1 $"   OR4A [5] $end
+$var wire      1 %"   OR4A [4] $end
+$var wire      1 &"   OR4A [3] $end
+$var wire      1 '"   OR4A [2] $end
+$var wire      1 ("   OR4A [1] $end
+$var wire      1 )"   OR4A [0] $end
+
+$scope begin OR4LOOP[0] $end
+$var parameter 32 *"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[1] $end
+$var parameter 32 +"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[2] $end
+$var parameter 32 ,"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[3] $end
+$var parameter 32 -"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[4] $end
+$var parameter 32 ."   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[5] $end
+$var parameter 32 /"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[6] $end
+$var parameter 32 0"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[7] $end
+$var parameter 32 1"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[8] $end
+$var parameter 32 2"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[9] $end
+$var parameter 32 3"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[10] $end
+$var parameter 32 4"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[11] $end
+$var parameter 32 5"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[12] $end
+$var parameter 32 6"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[13] $end
+$var parameter 32 7"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[14] $end
+$var parameter 32 8"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR4LOOP[15] $end
+$var parameter 32 9"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[0] $end
+$var parameter 32 :"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[1] $end
+$var parameter 32 ;"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[2] $end
+$var parameter 32 <"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[3] $end
+$var parameter 32 ="   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[4] $end
+$var parameter 32 >"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[5] $end
+$var parameter 32 ?"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[6] $end
+$var parameter 32 @"   gi [31:0] $end
+$upscope $end
+
+
+$scope begin OR2LOOP[7] $end
+$var parameter 32 A"   gi [31:0] $end
+$upscope $end
+
+$upscope $end
+
+
+$scope module encode8 $end
+$var wire      8 l!   encode_In [7:0] $end
+$var wire      3 +    level [2:0] $end
+$var wire      3 n!   Binary_Out [2:0] $end
+$var wire      1 p!   error  $end
+$var wire      3 B"   right [2:0] $end
+$var wire      3 C"   left [2:0] $end
+$var wire      3 D"   diff [2:0] $end
+$upscope $end
+
+$upscope $end
+
+$upscope $end
+
+$upscope $end
+
+$upscope $end
+
+$enddefinitions $end
+#1000000
+$dumpvars
+b111 A"
+b110 @"
+b101 ?"
+b100 >"
+b11 ="
+b10 <"
+b1 ;"
+b0 :"
+b1111 9"
+b1110 8"
+b1101 7"
+b1100 6"
+b1011 5"
+b1010 4"
+b1001 3"
+b1000 2"
+b111 1"
+b110 0"
+b101 /"
+b100 ."
+b11 -"
+b10 ,"
+b1 +"
+b0 *"
+b111110 Z!
+b111101 Y!
+b111100 X!
+b111011 W!
+b111010 V!
+b111001 U!
+b111000 T!
+b110111 S!
+b110110 R!
+b110101 Q!
+b110100 P!
+b110011 O!
+b110010 N!
+b110001 M!
+b110000 L!
+b101111 K!
+b101110 J!
+b101101 I!
+b101100 H!
+b101011 G!
+b101010 F!
+b101001 E!
+b101000 D!
+b100111 C!
+b100110 B!
+b100101 A!
+b100100 @!
+b100011 ?!
+b100010 >!
+b100001 =!
+b100000 <!
+b11111 ;!
+b11110 :!
+b11101 9!
+b11100 8!
+b11011 7!
+b11010 6!
+b11001 5!
+b11000 4!
+b10111 3!
+b10110 2!
+b10101 1!
+b10100 0!
+b10011 /!
+b10010 .!
+b10001 -!
+b10000 ,!
+b1111 +!
+b1110 *!
+b1101 )!
+b1100 (!
+b1011 '!
+b1010 &!
+b1001 %!
+b1000 $!
+b111 #!
+b110 "!
+b101 !!
+b100 ~
+b11 }
+b10 |
+b1 {
+b0 z
+b10010101010101010101010101010101010101010101010101010101010101 !
+b10 "
+b10 #
+b1 $
+b1111001 %
+0&
+b1 '
+b0 (
+b0 )
+b10010101010101010101010101010101010101010101010101010101010101 *
+b1 +
+b10 ,
+b10 -
+b0 .
+0/
+10
+11
+12
+13
+14
+05
+06
+17
+b1 8
+b10 9
+b11111001 :
+0;
+0<
+1=
+0>
+0?
+0@
+0A
+0B
+0C
+0D
+0E
+0F
+0G
+0H
+0I
+0J
+0K
+0L
+0M
+0N
+0O
+0P
+0Q
+0R
+0S
+0T
+0U
+0V
+0W
+0X
+0Y
+0Z
+0[
+0\
+0]
+0^
+0_
+0`
+0a
+0b
+0c
+0d
+0e
+0f
+0g
+0h
+0i
+0j
+0k
+0l
+0m
+0n
+0o
+0p
+0q
+0r
+0s
+0t
+0u
+0v
+0w
+0x
+0y
+b1000000000000000000000000000000000000000000000000000000000000 [!
+1\!
+0]!
+0^!
+0_!
+0`!
+0a!
+0b!
+0c!
+1d!
+0e!
+0f!
+0g!
+0h!
+0i!
+0j!
+0k!
+b10000 l!
+b111 m!
+b100 n!
+0o!
+0p!
+b0 q!
+0r!
+0s!
+b111 t!
+b111 u!
+b10000 v!
+b1 w!
+1x!
+0y!
+0z!
+0{!
+0|!
+0}!
+0~!
+0!"
+0""
+0#"
+0$"
+0%"
+0&"
+0'"
+0("
+0)"
+b100 B"
+b100 C"
+b0 D"
+$end

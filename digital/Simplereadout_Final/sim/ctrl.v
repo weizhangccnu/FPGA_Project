@@ -15,16 +15,26 @@
 -- ROI = region of interest, 16-bit vector specifies which pixels are enabled for readout
 -- Pixel array index:
 --
+old index
 --      0    1    2    3
 -- 
 -- 0   00   01   02   03
 -- 1   04   05   06   07
 -- 2   08   09   10   11
 -- 3   12   13   14   15
+
+new index
+--      0    1    2    3
+-- 
+-- 0   00   04   08   12
+-- 1   01   05   09   13
+-- 2   02   06   10   14
+-- 3   03   07   11   15
 --
 -- the HIGHEST index pixels will reageddd out first.
 -- e.g. ROI=X"9201" will cause pixels 15 (Row3Col3), 12 (Row3Col0), 9 (Row2Col1), and 0 (Row0Col0) readout in that order.
 *********************************************************************************************************************/
+`timescale 1ps/100fs
 module ctrl(
 	clock,
 	reset,
@@ -38,7 +48,9 @@ module ctrl(
 	din1,
 	din2,
 	din3,
-	dout
+	dout,
+	VDD,
+	VSS
 );
 
 input clock;
@@ -54,6 +66,7 @@ input [29:0] din1;	//-- column buffers from pixels
 input [29:0] din2;	//-- column buffers from pixels
 input [29:0] din3;	//-- column buffers from pixels
 output [29:0] dout;	//-- parallel output bus to serializer, 640Mbps
+inout VDD, VSS;
 
 
 reg [11:0] bcid_reg, l1acc_id_reg;
@@ -121,7 +134,7 @@ always@(posedge clock) begin
 					addr_reg <= 0;		// added by quan
 				end
 			
-			capture :		//-- normal run mode, incrementing counter, WE=1
+			capture :					//-- normal run mode, incrementing counter, WE=1
 				begin
 					if(l1acc) begin		//send SOF
 						l1acc_id_reg <= bcid_reg;	//store the BCID of the BX that L1acc occurs in & use it for SOF
@@ -150,7 +163,7 @@ always@(posedge clock) begin
 						if(roi_reg == proi)	//this is the end of the last pixel buffer
 							state <= eof;
 						else begin		//more buffers to dump, select next buffer and loop again
-							roi_reg <= (roi_reg ^ proi);
+							roi_reg <= roi_reg ^ proi;
 							addr_reg <= addr_reg + 1;
 							state <= dump;
 						end
@@ -175,23 +188,23 @@ assign we = (state == capture)?1:0;
 
 //-- mux to select which pixel COLUMN to read out, PROI is ONE HOT
 
-assign dmux = 	((proi[0] == 1) || (proi[4] == 1) || (proi[8] == 1) || (proi[12] == 1))?din0:
-		((proi[1] == 1) || (proi[5] == 1) || (proi[9] == 1) || (proi[13] == 1))?din1:
-		((proi[2] == 1) || (proi[6] == 1) || (proi[10] == 1) || (proi[14] == 1))?din2:
-		((proi[3] == 1) || (proi[7] == 1) || (proi[11] == 1) || (proi[15] == 1))?din3:
-		30'h0000000;
+assign dmux = 	((proi[0] == 1) || (proi[1] == 1) || (proi[2] == 1) || (proi[3] == 1))?din0:
+			((proi[4] == 1) || (proi[5] == 1) || (proi[6] == 1) || (proi[7] == 1))?din1:
+			((proi[8] == 1) || (proi[9] == 1) || (proi[10] == 1) || (proi[11] == 1))?din2:
+			((proi[12] == 1) || (proi[13] == 1) || (proi[14] == 1) || (proi[15] == 1))?din3:
+			30'h00000000;
 
 //-- select which ROW output enable to drive, PROI is ONE HOT
 
-assign roe[0] = ((proi[0] == 1) || (proi[1] == 1) || (proi[2] == 1) || (proi[3] == 1))?1:0;
-assign roe[1] = ((proi[4] == 1) || (proi[5] == 1) || (proi[6] == 1) || (proi[7] == 1))?1:0;
-assign roe[2] = ((proi[8] == 1) || (proi[9] == 1) || (proi[10] == 1) || (proi[11] == 1))?1:0;
-assign roe[3] = ((proi[12] == 1) || (proi[13] == 1) || (proi[14] == 1) || (proi[15] == 1))?1:0;
+assign roe[0] = ((proi[0] == 1) || (proi[4] == 1) || (proi[8] == 1) || (proi[12] == 1))?1:0;
+assign roe[1] = ((proi[1] == 1) || (proi[5] == 1) || (proi[9] == 1) || (proi[13] == 1))?1:0;
+assign roe[2] = ((proi[2] == 1) || (proi[6] == 1) || (proi[10] == 1) || (proi[14] == 1))?1:0;
+assign roe[3] = ((proi[3] == 1) || (proi[7] == 1) || (proi[11] == 1) || (proi[15] == 1))?1:0;
 
 assign dout = 	(state == sof) ? {18'h25555,l1acc_id_reg}:
 		(state == dump) ? dmux[29:0]:
 		(state == eof) ? 30'h2EADBEEF:
-		30'h0000000;
+		30'h00000000;
 
 assign addr = addr_reg;
 

@@ -17,30 +17,30 @@
 -- 
 -- When L1acc occurs the 
 */
-
+`timescale 1ps/100fs
 module etroc1 ( 
-			clock,
-			reset,
-			l1acc,
-			bc0,
-			roi,
-			din_0_0,
-			din_1_0,
-			din_2_0,
-			din_3_0,
-			din_0_1,
-			din_1_1,
-			din_2_1,
-			din_3_1,
-			din_0_2,
-			din_1_2,
-			din_2_2,
-			din_3_2,
-			din_0_3,
-			din_1_3,
-			din_2_3,
-			din_3_3,
-			dout
+	clock,
+	reset,
+	l1acc,
+	bc0,
+	roi,
+	din_0_0,
+	din_1_0,
+	din_2_0,
+	din_3_0,
+	din_0_1,
+	din_1_1,
+	din_2_1,
+	din_3_1,
+	din_0_2,
+	din_1_2,
+	din_2_2,
+	din_3_2,
+	din_0_3,
+	din_1_3,
+	din_2_3,
+	din_3_3,
+	dout
 );
 
 input clock;
@@ -91,13 +91,15 @@ assign din[1][3] = din_1_3;
 assign din[2][3] = din_2_3;
 assign din[3][3] = din_3_3;
 
+wire clk40M_In;
+assign #37 clk40M_In = clock;
 
 genvar R_gen, C_gen;
 generate
 	for (R_gen = 0; R_gen < 4; R_gen = R_gen + 1) begin
 		for (C_gen = 0; C_gen < 4; C_gen = C_gen + 1) begin
 			ram ram_inst(
-				.clock(clock),
+				.clock(clk40M_In),
 				.we(we),
 				.addr(addr),
 				.din(din[R_gen][C_gen]),
@@ -118,6 +120,37 @@ ram ram_inst_test(
 				.dout(colbus[1])
 			);
 */
+
+reg [29:0] colbus_in [0:3];
+//--------------------------------------------------> Data out trace latency
+always@(negedge clk40M_In)
+begin
+	if (roe == 4'b0001) begin
+		#1400 colbus_in[3] = colbus[3];		//the first row data output latency is about 1.4 ns
+		colbus_in[2] = colbus[2];
+		colbus_in[1] = colbus[1];
+		colbus_in[0] = colbus[0];
+	end
+	else if (roe == 4'b0010) begin	
+		#1300 colbus_in[3] = colbus[3];		//the second row data output latency is about 1.3 ns
+		colbus_in[2] = colbus[2];
+		colbus_in[1] = colbus[1];
+		colbus_in[0] = colbus[0];
+	end
+	else if (roe == 4'b0100) begin
+		#1200 colbus_in[3] = colbus[3];		//the third row data output latency is about 1.2 ns
+		colbus_in[2] = colbus[2];
+		colbus_in[1] = colbus[1];
+		colbus_in[0] = colbus[0];
+	end
+	else begin
+		#1100 colbus_in[3] = colbus[3];		//the fourth row data output latency is about 1.1 ns
+		colbus_in[2] = colbus[2];
+		colbus_in[1] = colbus[1];
+		colbus_in[0] = colbus[0];
+	end
+end
+//--------------------------------------------------> Data out trace latency
 ctrl ctrl_inst(
 			.clock(clock),
 			.reset(reset),
@@ -127,10 +160,10 @@ ctrl ctrl_inst(
 			.we(we),
 			.addr(addr),
 			.roe(roe),
-			.din0(colbus[0]),
-			.din1(colbus[1]),
-			.din2(colbus[2]),
-			.din3(colbus[3]),
+			.din0(colbus_in[0]),
+			.din1(colbus_in[1]),
+			.din2(colbus_in[2]),
+			.din3(colbus_in[3]),
 			.dout(dout)
 		);
 

@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////////
-// Author:      Hanhan Sun
+// Author:     
 // 
 // Create Date:    8/13/2019 3:24 PM
 // Design Name:    ETROC1 
@@ -37,55 +37,12 @@ output [29:0] DataOut;
 reg [15:0] counter;
 //reg rst_int;	//added by quan
 
-/*
-always@(negedge RSTn or posedge CLK) begin
-if(!RSTn)		
-	rst_int <= 1'b0;
-else begin
-	rst_int <= 1'b1;
-end
-end
-*/
-
-/*
-always@(negedge RSTn or posedge CLK) begin
-if(!RSTn)		
-	In_reg <= 30'b0;
-else begin
-	In_reg <= DataIn;
-end
-end
-*/
-
 always@(posedge CLK) begin
 if (!TestRO)
 	counter <= 16'b0;
 else
 	counter <= counter + 16'b0000_0000_0000_0001;
 end
-
-/*
-always@(negedge RSTn or posedge CLK) begin
-if(!RSTn)		
-	counter <= 16'b0;
-else begin
-	counter <= counter + 16'b0000_0000_0000_0001;
-end
-end
-*/
-
-
-
-/*
-always@(negedge RSTn or posedge CLK) begin
-if(!RSTn)		
-	DataRO <= 30'b0;
-else begin
-	DataRO <= {10'b1010101010,CFGROTest,counter};
-end
-end
-*/
-
 
 assign DataOut = (TestRO==1'b1)?{10'b1010101010,CFGROTest,counter}:DataIn;
 

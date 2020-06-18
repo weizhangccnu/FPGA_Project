@@ -36,8 +36,10 @@ wire CalerrorFlagReg;				// TOA encoded data error flag
 parameter TOA = 3000;
 parameter TOT = 6000;
 integer i = 0;
+integer fp_w;						// file name for TDC output
 //-------------- initial ----------------//
 initial begin
+	fp_w = $fopen("ETROC2_TDC_testMode=0_polaritySel=1_TOA_Scan_20200618.dat", "w");
 	clk40 = 1'b0;
 	clk320 = 1'b0;
 	pulse = 1'b0;
@@ -52,7 +54,7 @@ initial begin
 	timeStampMode = 1'b0;		
 	
 	#100 resetn = 1'b1;
-	#500000000 $stop;
+	#400000000 $stop;
 end
 
 // pulse_config define
@@ -83,8 +85,10 @@ end
 
 // pulse generate
 initial begin
-	for(i=1;i<12500;i=i+1) begin
+	for(i=10;i<12500;i=i+1) begin
 		pulse_config(i, TOT);
+		$fwrite(fp_w, "%5d %3d %3d %3d %1d\n", i, TOA_codeReg, TOT_codeReg, Cal_codeReg, hitFlag);
+		$display("%5d %3d %3d %3d %1d", i, TOA_codeReg, TOT_codeReg, Cal_codeReg, hitFlag);
 	end
 
 end

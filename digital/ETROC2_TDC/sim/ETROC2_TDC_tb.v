@@ -1,7 +1,7 @@
 /* 
- * filename: ETROC2_TDC.v 
+ * filename: ETROC2_TDC_tb.v 
  * 
- * ETROC2 TDC Behavior model to verify the Delay Line and Encoder function.
+ * ETROC2 TDC Behavior model testbench to verify the Delay Line and Encoder function.
  * 
  * History:
  *   2020/06/17	: Create: Datao, Wei Zhang		

@@ -21,17 +21,17 @@ wire [31:0] Q;				// 32-bit parallel data
 initial begin
 	ext_clk = 1'b0;
 	#3 int_clk = 1'b0;
-	clk_sel = 1'b1;
+	clk_sel = 1'b0;
 	rst = 1'b1;
 	start = 1'b0;
 	mode = 2'b00;
 	prog = 32'ha5a5_5a5a;
-	TCKHP = 4'd4;
+	TCKHP = 4'd1;
 	#5000 rst = 1'b0;
 	#1000 rst = 1'b1;
 	#5000 mode = 2'b01;
 	#20000 start = 1'b1;
-	#3000 start = 1'b0;
+	#500 start = 1'b0;
 	#250000 mode = 2'b10;
 	#50000 $stop;
 	 
@@ -39,20 +39,28 @@ end
 
 
 always begin
-	#250 ext_clk = ~ext_clk;			// 2 MHz clk
+	#62.5 ext_clk = ~ext_clk;			// 8 MHz external clock
 end
 
 always begin
-	#12.5 int_clk = ~int_clk;			// 2 MHz clk
+	#12.5 int_clk = ~int_clk;			// 40 MHz internal clock
 end
 
-
-clock_divider clock_divider_inst(
-.int_clock(int_clk),			// internal 40 MHz clock from PLL
-.ext_clock(ext_clk),			// external 2 MHz clock
-.clk_sel(clk_sel),				// clock select, 1: internal 40 MHz clock, 0: external 2 MHz clock, default value is 1
-.rst(rst),						// system reset
-.clk_out(clk_2M)				// 2 MHz clock output
+efuse_controller efuse_controller_inst(
+.int_clk(int_clk),				// internal 40 MHz clock from PLL
+.ext_clk(ext_clk), 				// external 2 MHz clock
+.rst(rst),						// system reset, low active	
+.clk_sel(clk_sel),				// clock select
+.mode(mode),					// mode select, 2'b01 for programming mode, 2'b10 for reading mode
+.start(start), 					// start program
+.TCKHP(TCKHP),					// SCLK high period, default value is 4
+.prog(prog),					// 32-bit program data
+.EN(EN),						// EN for power switch
+.RAMPENA(RAMPENA),				// RAMPENA for power switch
+.SHORT(SHORT),					// SHORT for power switch
+.CSB(CSB),						// chip select for eFuse, low active
+.PGM(PGM), 						// program mode siganl for eFuse
+.SCLK(SCLK)						// serial clock signal for eFuse
 );
 
 power_switch power_switch_inst(
@@ -63,21 +71,6 @@ power_switch power_switch_inst(
 .SHORT(SHORT),					// SHORT signal tied the output to ground
 .VDDQ_2V5(VDDQ_2V5)				// 2.5 V power output
 );
-
-efuses_control_sm efuses_control_sm_inst(
-.clk(clk_2M),						// 40 MHz 
-.rst(rst),						// system reset
-.start(start),					// Progarmming start signal
-.mode(mode),					// program mode or read mode selection
-.TCKHP(TCKHP),					// SCLK high period, default value is 4
-.prog(prog),					// 32-bit program data
-.sw_en(EN),						// power switch signal
-.sw_rampena(RAMPENA),			// power switch rampena signal
-.sw_short(SHORT),				// power switch output tied to ground
-.CSB(CSB),						// efuse chip select, low active
-.PGM(PGM),						// efuse progarm signal
-.SCLK(SCLK)						// efuse serial clock
- );
 
 TEF65LP32X1S_I TEF65LP32X1S_I_inst(
 .CSB(CSB), 

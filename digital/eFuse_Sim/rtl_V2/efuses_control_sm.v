@@ -45,7 +45,7 @@ module efuses_control_sm(
     localparam [4:0] READ_END  = 5'b10001;
 
     reg [2:0] start_cnt;
-    reg [3:0] pgm_cnt;
+    reg [5:0] pgm_cnt;
 	reg [2:0] pwr_cnt;
     reg [5:0] bit_cnt;
 
@@ -85,7 +85,7 @@ module efuses_control_sm(
 
             PGM_ST:                                 next = SCLK_WR;
 
-            SCLK_WR:    if (pgm_cnt == 4'd0)        next = PGM_END;
+            SCLK_WR:    if (pgm_cnt == 6'd0)        next = PGM_END;
                         else                        next = SCLK_WR;
 
             PGM_END:    if (bit_cnt == 6'd32)       next = SCLK_DOWN;
@@ -132,7 +132,7 @@ module efuses_control_sm(
 			sw_rampena <= #2 1'b0;
 			sw_short <= #2 1'b1;
             start_cnt <= #2 3'd0;
-            pgm_cnt <= #2 (4'd5 + TCKHP);			// 3 us + 0.5 us * TCKHP
+            pgm_cnt <= #2 (6'd23 + TCKHP * 4);			// 3 us + 0.5 us * TCKHP
 			pwr_cnt <= #2 3'd0;
             bit_cnt <= #2 6'd0;
         end else begin
@@ -173,15 +173,15 @@ module efuses_control_sm(
                             PGM  <= #2  prog[bit_cnt];
                             SCLK <= #2  1'b0;
                             CSB <= #2  1'b0;
-                            pgm_cnt <= #2  (4'd5 + TCKHP);
+                            pgm_cnt <= #2  (6'd23 + TCKHP * 4);
                         end
                 SCLK_WR: begin
                             SCLK <= #2  1'b1;
-                            pgm_cnt <= #2  pgm_cnt - 4'd1;
+                            pgm_cnt <= #2  pgm_cnt - 6'd1;
                         end
                 PGM_END: begin
                             SCLK <= #2  1'b1;
-                            pgm_cnt <= #2  4'd0;
+                            pgm_cnt <= #2  6'd0;
                             PGM <= #2  1'b0;
                             bit_cnt <= #2  bit_cnt + 6'd1;
                         end

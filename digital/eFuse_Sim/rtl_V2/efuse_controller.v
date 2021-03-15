@@ -24,43 +24,14 @@ module efuse_controller(
 );
 
 wire clk_8M;
-reg [2:0] start_cnt;
-reg enable_cnt1, enable_cnt2;
-reg start_pulse;
-always @(posedge start or negedge rst)
-begin
-	if(!rst)
-	begin
-		enable_cnt1 = 1'b0;
-	end
-	else
-	begin
-		enable_cnt1 = 1'b1;
-	end
-end
+wire start_pulse;
 
-always @(posedge clk_8M)
-begin
-	if(!rst)
-	begin
-		start_cnt <= 3'b000;
-		start_pulse <= 1'b0;
-		enable_cnt2 = 1'b1;
-	end
-	else if(enable_cnt1 == 1'b1 && enable_cnt2 == 1'b1)
-	begin
-		if(start_cnt != 3'b111)
-		begin
-			start_cnt <= start_cnt + 1'b1;
-			start_pulse <= 1'b1;
-		end
-		else
-		begin
-			enable_cnt2 <= 1'b0;
-			start_pulse <= 1'b0;
-		end
-	end
-end
+start_generator start_generator_inst(
+.clk_8M(clk_8M),				// input clk
+.rst(rst),						// system rst
+.start(start),					// start signal
+.start_pulse(start_pulse)		// start_pulse output
+);
 
 clock_divider clock_divider_inst(
 .int_clock(int_clk),			// internal 40 MHz clock from PLL

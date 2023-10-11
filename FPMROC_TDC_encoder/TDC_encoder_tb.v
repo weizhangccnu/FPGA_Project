@@ -15,7 +15,8 @@ reg [54:0] fine_raw_data;	// fine data 55-bit
 reg [4:0] counterA;			// coarse counter A, 5-bit
 reg [4:0] counterB;			// coarse counter B, 5-bit
 
-integer fp;					// file handler
+integer fp_r;				// file handler
+integer fp_w;				// file handler
 integer count = 0;			// counter to record read data
 integer cnt;				// file counter
 
@@ -31,15 +32,23 @@ end
 //------------------------------------------------> initial 
 initial begin
 	$timeformat(-9, 1, "ns", 1);
-	fp = $fopen("./rtl/stop_data_0930.dat", "r");		// open data file
-	if(fp == 0)
+	fp_r = $fopen("./rtl/stop_data_0930.dat", "r");		// open read data file
+	if(fp_r == 0)
 	begin
-		$display("$open file failed!");
+		$display("$open read file failed!");
 		$stop;
 	end
-	$display("\n ============== file opened... ==============");
+	$display("\n============== read file opened... ==============");
+
+	fp_w = $fopen("./rtl/TDC_binary_output.dat", "w");	// open write data file
+	if(fp_w == 0)
+	begin
+		$display("$open write file failed!");
+		$stop;
+	end
+	$display("\n============== write file opened... ==============");
 	clk40M = 1'b0;									// initial clk40M 
-	#800000000 $finish;								// finish the simulation
+	//#200000000 $finish;								// finish the simulation
 end
 
 //------------------------------------------------< initial 
@@ -47,16 +56,22 @@ end
 //------------------------------------------------> read data 
 always @(posedge clk40M)
 begin 
-	if(count < 30000)
+	if(count < 7701)
 	begin 
-		cnt = $fscanf(fp, "%b %b %b", fine_raw_data, counterA, counterB);	// read stop_data_0930.dat file row by row
-		count <= count + 1'b1;
+		cnt = $fscanf(fp_r, "%b %b %b", fine_raw_data, counterA, counterB);	// read stop_data_0930.dat file row by row
 		$monitor("%t %d %b %b %b %b", $realtime, count, fine_raw_data, counterA, counterB, TDC_bin_code);
+		if(count == 0)
+			$fwrite(fp_w, "%3f %d\n", 0.3+0.001*count, 12'd52);
+		else
+			$fwrite(fp_w, "%3f %d\n", 0.3+0.001*count, TDC_bin_code);
+		count <= count + 1'b1;
 	end
 	else
 	begin
 		count <= 1'b0;	
-		$fclose(fp);
+		$fclose(fp_r);
+		$fclose(fp_w);
+		$finish;
 	end
 end
 //------------------------------------------------> read data 
